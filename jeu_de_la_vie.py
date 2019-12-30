@@ -7,19 +7,19 @@ from random import randint
 ## -- Canevas -- 
 couleur_cellule = 'red'
 couleur_fond = 'white'
-hauteur_fenetre = 5000
-largeur_fenetre = 5000
+hauteur_fenetre = 600
+largeur_fenetre = 600
 
 ## -- Initialisation --
 ## Taille de la grille
-global taille_grille = 30
+taille_grille = 30
 taille_bloc = taille_grille/6
 ## Pourcentage de vie
-global pourcentage_vie = 20
+pourcentage_vie = 20
 
 ## -- Temps réel -- 
 ## Vitesse 
-global vitesse_animation = 5
+vitesse_animation = 5
 
 # -------------  FONCTIONS ---------------
 
@@ -43,15 +43,20 @@ global vitesse_animation = 5
 ## Vitesse
 
 # ----------- INITIALISATION -------------
-grille = # On définit la variable grille
-sauvegarde_grille =  # On définit de même sa sauvegarde
+#grille = # On définit la variable grille
+#sauvegarde_grille =  # On définit de même sa sauvegarde
 
 root = Tk() # Fenêtre principale Tkinter
 root.title("SR01 - Devoir 3 - Jeu de la vie")
+root.resizable(False, False)
+# Barre menu
+sidebar = Frame(root, width=hauteur_fenetre*0.3, height=hauteur_fenetre, bg='black', relief='sunken', borderwidth=2)
+sidebar.pack(expand=False, fill='both', side='right', anchor='nw')
 
-canevas = Canvas(root, height=hauteur_fenetre, width=largeur_fenetre, bg=couleur_fond)
+# Fenêtre grille    
+canevas = Frame(root, width=largeur_fenetre, height=hauteur_fenetre, bg='white')
+canevas.pack(expand=False, fill='both', side='left')
 
-canevas.focus_set() # Fenetre en premier plan
-canevas.pack # Réorganisation widgets 
+
 
 root.mainloop() # Appel boucle
