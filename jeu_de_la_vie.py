@@ -34,12 +34,26 @@ vitesse_animation = 1
 ## -- Lancer le jeu --
 def lancer_jeu():
     global statut
+    global bouton_taille_grille
+    global bouton_pourcentage_vie
+    global bouton_vitesse
+    
     statut = True
+    bouton_taille_grille.config(state=DISABLED, label="Taille de la grille (DESACTIVE)", length=220)
+    bouton_pourcentage_vie.config(state=DISABLED, label="% de Vie (DESACTIVE)", length=220)
+    bouton_vitesse.config(length=220)
     print("Le jeu s'est lancé; statut = %d" % statut)
 ## -- Arrêter le jeu --
 def arreter_jeu():
     global statut
+    global bouton_taille_grille
+    global bouton_pourcentage_vie
+    global bouton_vitesse
+    
     statut = False
+    bouton_taille_grille.config(state=ACTIVE, label="Taille de la grille", length=180)
+    bouton_pourcentage_vie.config(state=ACTIVE, label="% de Vie", length=180)
+    bouton_vitesse.config(length=180)
     print("Le jeu s'est arrêté; statut = %d" % statut)
 
 ## -- Initialiser le tableau grille[][] avec des valeurs random --     
@@ -48,6 +62,7 @@ def initialiser_tableau(tableau):
     global pourcentage_vie_actuel
     global taille_grille
     nombre_de_blocs = taille_grille*taille_grille
+    nombre_de_blocs_vivants = 0
     
     pourcentage_vie_actuel = 0
     for i in range(0,taille_grille):
@@ -60,7 +75,8 @@ def initialiser_tableau(tableau):
         y_random = randint(0, taille_grille-1)
         #print("<---- y rand : %d --->" % y_random)
         tableau[x_random][y_random] = True
-        pourcentage_vie_actuel += float(1/(nombre_de_blocs))
+        nombre_de_blocs_vivants += 1
+        pourcentage_vie_actuel += float(nombre_de_blocs_vivants/(nombre_de_blocs)/100)
         #print("<---- pourcentage actuel : %f --->" % pourcentage_vie_actuel)
     
     print("La grille est initialisée.\n")
@@ -91,7 +107,7 @@ def dessiner_grille(tableau):
         position_y += taille_bloc    
     
     # Debugging
-    print(canevas.find_all())
+    #print(canevas.find_all())
     
 ## -- Initialiser le jeu --         
 def initialiser_jeu():
@@ -100,14 +116,25 @@ def initialiser_jeu():
     initialiser_tableau(tableau)
     dessiner_grille(tableau)
     print("Le jeu est initialisé.\n")
-    
+    nombre_de_voisins(5,5,tableau)
+## -- Chercher case -- 
+def chercher_case(i, j, tableau):   
+    print((i+taille_grille)%taille_grille, " ", (j+taille_grille)%taille_grille, " ", tableau[(i+taille_grille)%taille_grille][(j+taille_grille)%taille_grille], "\n")
+    return tableau[(i+taille_grille*10)%taille_grille-1][(j+taille_grille*10)%taille_grille-1]
 
-    
 ## -- Compter le nombre de voisins d'une case grille[i][j] --         
-def nombre_de_voisins(i, j, grille):
+def nombre_de_voisins(i, j, tableau):
     nbr_de_voisins = 0
-    
-    print("Nombre de voisins de (%d, %d) est %d" % i, j, nbr_de_voisins)
+    nbr_de_voisins += 1 if chercher_case(i-1, j-1, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i-1, j, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i-1, j+1, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i, j-1, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i, j+1, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i+1, j-1, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i+1, j, tableau) else 0
+    nbr_de_voisins += 1 if chercher_case(i+1, j+1, tableau) else 0
+    print("Le nombre de voisins de (", i, ",", j,") est ", nbr_de_voisins, "\n")
+    return nbr_de_voisins
 
 ## -- Mise à jour grille --             
 def mise_a_jour_grille(grille, copie_grille):
