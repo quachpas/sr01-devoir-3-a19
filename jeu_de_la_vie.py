@@ -27,6 +27,7 @@ pourcentage_vie = 0
 
 ## Vitesse 
 vitesse_animation = 1
+pas = int(1000/vitesse_animation)
 
 # -------------  FONCTIONS ---------------
 
@@ -37,12 +38,15 @@ def lancer_jeu():
     global bouton_taille_grille
     global bouton_pourcentage_vie
     global bouton_vitesse
+    global tableau
+    global copie_tableau
     
     statut = True
     bouton_taille_grille.config(state=DISABLED, label="Taille de la grille (DESACTIVE)", length=220)
     bouton_pourcentage_vie.config(state=DISABLED, label="% de Vie (DESACTIVE)", length=220)
     bouton_vitesse.config(length=220)
-    print("Le jeu s'est lancé; statut = %d" % statut)
+    mise_a_jour_grille(tableau, copie_tableau)
+    #print("Le jeu s'est lancé; statut = %d" % statut)
 ## -- Arrêter le jeu --
 def arreter_jeu():
     global statut
@@ -54,7 +58,7 @@ def arreter_jeu():
     bouton_taille_grille.config(state=ACTIVE, label="Taille de la grille", length=180)
     bouton_pourcentage_vie.config(state=ACTIVE, label="% de Vie", length=180)
     bouton_vitesse.config(length=180)
-    print("Le jeu s'est arrêté; statut = %d" % statut)
+    #print("Le jeu s'est arrêté; statut = %d" % statut)
 
 ## -- Initialiser le tableau grille[][] avec des valeurs random --     
 def initialiser_tableau(tableau):    
@@ -76,10 +80,11 @@ def initialiser_tableau(tableau):
         #print("<---- y rand : %d --->" % y_random)
         tableau[x_random][y_random] = True
         nombre_de_blocs_vivants += 1
-        pourcentage_vie_actuel += float(nombre_de_blocs_vivants/(nombre_de_blocs)/100)
+        pourcentage_vie_actuel = float(nombre_de_blocs_vivants/nombre_de_blocs)
         #print("<---- pourcentage actuel : %f --->" % pourcentage_vie_actuel)
+        
     
-    print("La grille est initialisée.\n")
+    #print("La grille est initialisée.\n")
 
 
 ## -- Dessiner la grille vide --
@@ -115,11 +120,13 @@ def initialiser_jeu():
     # Appeler dessiner_grille(canevas)
     initialiser_tableau(tableau)
     dessiner_grille(tableau)
-    print("Le jeu est initialisé.\n")
+    #print("Le jeu est initialisé.\n")
     nombre_de_voisins(5,5,tableau)
+    
+    
 ## -- Chercher case -- 
 def chercher_case(i, j, tableau):   
-    print((i+taille_grille)%taille_grille, " ", (j+taille_grille)%taille_grille, " ", tableau[(i+taille_grille)%taille_grille][(j+taille_grille)%taille_grille], "\n")
+    #print((i+taille_grille)%taille_grille, " ", (j+taille_grille)%taille_grille, " ", tableau[(i+taille_grille)%taille_grille][(j+taille_grille)%taille_grille], "\n")
     return tableau[(i+taille_grille*10)%taille_grille-1][(j+taille_grille*10)%taille_grille-1]
 
 ## -- Compter le nombre de voisins d'une case grille[i][j] --         
@@ -133,14 +140,31 @@ def nombre_de_voisins(i, j, tableau):
     nbr_de_voisins += 1 if chercher_case(i+1, j-1, tableau) else 0
     nbr_de_voisins += 1 if chercher_case(i+1, j, tableau) else 0
     nbr_de_voisins += 1 if chercher_case(i+1, j+1, tableau) else 0
-    print("Le nombre de voisins de (", i, ",", j,") est ", nbr_de_voisins, "\n")
+    #print("Le nombre de voisins de (", i, ",", j,") est ", nbr_de_voisins, "\n")
     return nbr_de_voisins
 
 ## -- Mise à jour grille --             
-def mise_a_jour_grille(grille, copie_grille):
+def mise_a_jour_grille(tableau, copie_tableau):
+    global taille_grille
+    global statut
+    global pas
     
-    
-    print("Le jeu est initialisé\n")
+    if (statut == True):
+        # copie du tableau précédent
+        for i in range(taille_grille):
+            for j in range(taille_grille):
+                copie_tableau[i][j] = tableau[i][j]
+                
+        # Analyse grille
+        for i in range(taille_grille):
+            for j in range(taille_grille):
+                if (nombre_de_voisins(i, j, copie_tableau) < 2 or nombre_de_voisins(i, j, copie_tableau) > 3):
+                    tableau[i][j] = False
+                elif (nombre_de_voisins(i, j, copie_tableau) == 3):
+                    tableau[i][j] = True
+        
+        dessiner_grille(tableau)
+        root.after(pas, mise_a_jour_grille, tableau, copie_tableau)
 
 ## -- Mise à jour des Sliders -- 
 def slider_taille_grille(val):
@@ -149,10 +173,13 @@ def slider_taille_grille(val):
     global pourcentage_vie
     global vitesse_animation
     global tableau
+    global copie_tableau
+    
     taille_grille = int(val)
     taille_bloc = hauteur_fenetre/taille_grille
-    print("Slider_val =",val,"\nTaille grille = ", taille_grille, "\nPourcentage_vie =", pourcentage_vie, "\nVitesse = ", vitesse_animation,"\n")
+    #print("Slider_val =",val,"\nTaille grille = ", taille_grille, "\nPourcentage_vie =", pourcentage_vie, "\nVitesse = ", vitesse_animation,"\n")
     tableau = [[0 for j in range(taille_grille)] for i in range(taille_grille)]
+    copie_tableau = [[0 for j in range(taille_grille)] for i in range(taille_grille)]
 
     
 def slider_pourcentage_vie(val):
@@ -160,14 +187,17 @@ def slider_pourcentage_vie(val):
     global pourcentage_vie
     global vitesse_animation
     pourcentage_vie = float(val)
-    print("Slider_val =",val,"\nTaille grille = ", taille_grille, "\nPourcentage_vie =", pourcentage_vie, "\nVitesse = ", vitesse_animation,"\n")
+    #print("Slider_val =",val,"\nTaille grille = ", taille_grille, "\nPourcentage_vie =", pourcentage_vie, "\nVitesse = ", vitesse_animation,"\n")
     
 def slider_vitesse_animation(val):
     global taille_grille
     global pourcentage_vie
     global vitesse_animation 
+    global pas
+    
     vitesse_animation = int(val)
-    print("Slider_val =",val,"\nTaille grille = ", taille_grille, "\nPourcentage_vie =", pourcentage_vie, "\nVitesse = ", vitesse_animation,"\n")
+    pas = int(1000/vitesse_animation)
+    #print("Slider_val =",val,"\nTaille grille = ", taille_grille, "\nPourcentage_vie =", pourcentage_vie, "\nVitesse = ", vitesse_animation,"\n")
     
 
 # ----------- INITIALISATION -------------
@@ -217,6 +247,5 @@ bouton_pourcentage_vie.pack(side='bottom')
 ## Taille de la grille ## -- Paramètres init --
 bouton_taille_grille = Scale(menu_cote, orient='horizontal', from_=5, to=500, length=180, variable=taille_grille, bg='#f0f0f0', relief='flat', highlightthickness=0, label='Taille de la grille', fg='blue', command=slider_taille_grille)
 bouton_taille_grille.pack(side='bottom')
-
 
 root.mainloop() # Appel boucle
