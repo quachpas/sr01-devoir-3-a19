@@ -1,0 +1,263 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fphw Assignment
+% LaTeX Template
+% Version 1.0 (27/04/2019)
+%
+% This template originates from:
+% https://www.LaTeXTemplates.com
+%
+% Authors:
+% Class by Felipe Portales-Oliva (f.portales.oliva@gmail.com) with template 
+% content and modifications by Vel (vel@LaTeXTemplates.com)
+%
+% Template (this file) License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%------------------------------------&----------------------------------------------------
+
+\documentclass[
+	12pt, % Default font size, values between 10pt-12pt are allowed
+	%letterpaper, % Uncomment for US letter paper size
+	%spanish, % Uncomment for Spanish
+]{fphw}
+
+% Template-specific packages
+\usepackage[utf8]{inputenc} % Required for inputting international characters
+\usepackage[T1]{fontenc} % Output font encoding for international characters
+\usepackage{rotating}
+\usepackage{amsmath} % AMS Math
+\usepackage{verbatim}
+\usepackage{cancel}
+
+\usepackage[htt]{hyphenat}
+
+\usepackage{graphics,graphicx} % Required for including images
+\graphicspath{{images/}{../images/}}
+\usepackage{booktabs} % Required for better horizontal rules in tables	
+\usepackage{float} % Float H 
+
+\usepackage{listings} % Required for insertion of code
+\usepackage{multicol}
+\usepackage{enumerate} % To modify the enumerate environment
+
+\usepackage{pstricks}
+\usepackage{pst-node}
+\usepackage{pst-tree} % Graphes shit
+
+\usepackage{xcolor}
+\usepackage{color}
+\definecolor{darkolivegreen}{rgb}{0.33, 0.42, 0.18}
+\definecolor{background}{RGB}{39, 40, 34}
+\definecolor{string}{RGB}{230, 219, 116}
+\definecolor{comment}{RGB}{117, 113, 94}
+\definecolor{normal}{RGB}{248, 248, 242}
+\definecolor{identifier}{RGB}{166, 226, 46}
+
+\usepackage{xparse}% to define star variant of macro
+\NewDocumentCommand{\ShowListingForLineNumber}{s O{1.0} m m m}{
+    \IfBooleanTF{#1}{\vspace{-#2\baselineskip}}{}
+    \lstinputlisting[
+            style=cstyle,
+            linerange={#3-#3},
+            firstnumber=#3,
+            caption=#4
+            ]{#5}
+} %Display specific line of a file using Listings
+
+\lstdefinestyle{pystyle}{
+		language=Python, % Use Perl functions/syntax highlighting
+		numbers=left, % Line-numbers position
+		captionpos=b, % Caption position
+		breaklines=true, % Automatic breakline
+		breakatwhitespace=true, % Breaks only at whitespace
+		frame=single, % Frame around the code listing
+		numbersep=5pt,	% Distance line-number to code
+		showstringspaces=false, % Don't put marks in string spaces
+		stepnumber=2, % Step for line-numbers
+		tabsize=4, % Default tabsize
+		numberstyle=\tiny\color{black}\ttfamily ,
+		backgroundcolor=\color{background}, % Background color
+		basicstyle=\color{normal}\ttfamily , % sets font style for the code
+		identifierstyle=\color{orange},
+	    keywordstyle=\color{magenta}\ttfamily ,	% sets color for keywords
+	    stringstyle=\color{string}\ttfamily ,		% sets color for strings
+	    commentstyle=\color{comment}\ttfamily ,	% sets color for comments
+		emph={format_string, eff_ana_bf, permute, eff_ana_btr},
+		emphstyle=\color{identifier}\ttfamily ,	
+		}
+
+\renewcommand\labelitemi{-}
+
+
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Devoir 3} % Assignment title
+
+\author{Pascal Quach, Korantin Toczé} % Student name
+
+\institute{Université de Technologie de Compiègne} % Institute or school name
+
+\class{Maîtrise des systèmes informatiques (SR01)} % Course or class name
+
+\date{30 Décembre 2019} % Due date
+
+\semestre{A19}
+
+
+%\professor{Dr. Albert Einstein} % Professor or teacher in charge of the assignment
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\maketitle % Output the assignment title, created automatically using the information in the custom commands above
+
+%----------------------------------------------------------------------------------------
+%	ASSIGNMENT CONTENT
+%----------------------------------------------------------------------------------------
+\section*{Jeu de la vie en Python}
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Tableau} - Constructeur,% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{constructeur_tableau.py}
+\end{problem}
+On initialise les booléens d'un tableau de taille $n*n$ à \textbf{faux}. 
+
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Tableau} - Méthode \texttt{initialiser\_tableau},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{initialiser_tableau.py}
+\end{problem}
+La fonction initialiser tableau est appelé lorsqu'on appuie sur le bouton "Initialiser". Il faut donc réinitialiser les valeurs du tableau à faux. Ensuite, on cherche à initialiser la grille entière de telle sorte à ne pas dépasser un certain pourcentage de vie. A cette fin, on se sert de la fonction \texttt{randint} pour générer aléatoirement des coordonnées. On incrémente le pourcentage de vie actuel à chaque fois qu'on rajoute une cellule vivante. 
+
+S'il se trouve que les coordonnées générées ont déjà été initialisées, on parcourt la grille de telle sorte à prendre la cellule à droite. Si cela n'est pas possible, on passe à la ligne suivante et ainsi de suite. 
+
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Tableau} - Méthode \texttt{chercher\_case},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{chercher_case.py}
+\end{problem}
+Cette méthode est utilisée pour se renseigner sur la valeur de la case $(i,j)$. On utilise un mode d'adressage prenant en compte les cases au bord de la grille. On utilise un coefficient pour éviter les débordements. On retire $1$ pour ajuster à l'index du tableau. 
+
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Tableau} - Méthode \texttt{nombre\_de\_voisins},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{nombre_de_voisins.py}
+\end{problem}
+On cherche les booléens des huit cases autour pour compter le nombre de voisins. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Tableau} - Méthode \texttt{mise\_a\_jour\_grille},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{mise_a_jour_grille.py}
+\end{problem}
+La mise à jour de la grille s'effectue en déclarant un deuxième tableau et en copiant les valeurs du premier dans celui-ci. 
+Il suffit ensuite d'effectuer l'analyse des cases. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Constructeur - Partie 1,% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{constructeur_jeu_de_la_vie.py}
+\end{problem}
+On déclare tous les paramètres du jeu de la vie, notamment la taille de la fenêtre, la taille de la grille, le statut par défaut, le pourcentage de vie initial, etc.
+Une application \textbf{Tkinter} est lancée, et on définit un premier \textit{Frame} qui correspond au menu sur le côté. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Constructeur - Partie 2,% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{constructeur_jeu_de_la_vie_2.py}
+\end{problem}
+Le deuxième \textit{Frame} correspond à celle du \textit{canvas} sur lequel on va dessiner. 
+Les quatre boutons de l'application sont déclarées et on donne les bonnes méthodes à lancer comme argument pour \textit{command}.
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Constructeur - Partie 3,% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{constructeur_jeu_de_la_vie_3.py}
+\end{problem}
+Les \textit{scale}s de taille de grille, pourcentage de vie initial et vitesse d'animation sont associées au bonnes méthodes qui permet de mettre à jour la valeur des variables. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Constructeur - Partie 3,% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{boucle.py}
+\end{problem}
+La boucle du jeu est lancée si et seulement si le booléen statut est vrai. On met à jour la grille, puis on dessine le tableau. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Méthode \texttt{dessiner\_grille},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{dessiner_grille.py}
+\end{problem}
+Pour le dessin, on parcourt le tableau ligne par ligne et on dessine un rectangle vide si la cellule est morte; un rectangle rouge si la cellule est vivante. On utilise pour cela la taille d'un bloc calculée à partir de la taille de la fenêtre et de la taille de la grille. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Méthode \texttt{lancer\_jeu},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{lancer_jeu.py}
+\end{problem}
+Cette méthode permet de mettre à jour le statut du jeu. On change ensuite les \textit{Scale}s pour désactiver celui de la taille de la taille et du pourcentage de vie initial. On ne veut pas pouvoir changer la taille de la grille, ni le pourcentage initial lorsque le jeu est en cours. 
+On appelle ensuite la boucle du jeu pour démarrer.
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Méthode \texttt{arreter\_jeu},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{arreter_jeu.py}
+\end{problem}
+On met à jour le statut du jeu pour arrêter le jeu. On remet les boutons à leur apparence initial. 
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Méthode \texttt{initialiser\_jeu},% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{initialiser_jeu.py}
+\end{problem}
+Le jeu est initialisé. On dessine ensuite le tableau généré.
+
+\begin{problem}
+	\lstinputlisting[
+		caption=Classe \texttt{Jeu\_de\_la\_vie} - Méthodes pour les sliders,% Caption above the listing
+		label=lst:prog1, % Label for referencing this listing
+		style=pystyle
+	]{sliders.py}
+\end{problem}
+Les trois méthodes correspondants aux \textit{Scale}s de l'application mettent à jour les variables de la classe. 
+Particulièrement, celui de la taille de la grille met à jour la taille de la grille, et réinitialise le tableau lui-même. C'est ce comportement qui oblige à désactiver le \textit{Scale} de la taille de la grille. 
+%----------------------------------------------------------------------------------------
+\end{document}
